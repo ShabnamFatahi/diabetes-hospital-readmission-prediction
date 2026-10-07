@@ -16,6 +16,7 @@ The target distribution is:
 | NO | 54,864 | 53.91% |
 | >30 | 35,545 | 34.93% |
 | <30 | 11,357 | 11.16% |
+
 The dataset can be downloaded from Kaggle:
 [Diabetes 130-US Hospitals
 Dataset](https://www.kaggle.com/datasets/gigimolashkhia/diabetes-130-us-hospitals-for-years-1999-2008)
@@ -62,6 +63,7 @@ The initial results were:
 | Decision Tree | 0.480 | 0.384 | 0.480 | 0.542 |
 | Random Forest | 0.584 | 0.390 | 0.536 | 0.663 |
 | XGBoost | 0.594 | 0.405 | 0.546 | 0.685 |
+
 XGBoost had the highest overall scores among the four initial models.
 ## Handling Class Imbalance
 The `<30` class was the smallest class in the dataset, so different approaches were tested to see how class
@@ -112,6 +114,7 @@ The final comparison was:
 | Random Forest | 0.584 | 0.390 | 0.536 | 0.663 |
 | XGBoost | 0.594 | 0.405 | 0.546 | 0.685 |
 | Tuned XGBoost | 0.597 | 0.417 | 0.554 | 0.687 |
+
 The tuned XGBoost model gave the best results in the final comparison, although the improvement over the
 initial XGBoost model was relatively small.
 ## Feature Importance
