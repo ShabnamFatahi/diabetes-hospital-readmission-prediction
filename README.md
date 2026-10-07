@@ -1,13 +1,12 @@
 # Diabetes Hospital Readmission Prediction
-This project uses the Diabetes 130-US Hospitals dataset to predict hospital readmission. The goal is to
-compare different classification models and examine which features are related to the prediction of
-readmission.
+This project uses the Diabetes 130-US Hospitals dataset to predict hospital readmission. The goal is to compare different classification models and examine which features are related to the prediction of readmission.
 
 ## Dataset
 The dataset used in this project is the **Diabetes 130-US Hospitals for Years 1999–2008** dataset.
-It contains **101,766 patient records** with information about hospital stays, diagnoses, medications,
-admission and discharge details, and other patient-related variables.
+
+It contains **101,766 patient records** with information about hospital stays, diagnoses, medications, admission and discharge details, and other patient-related variables.
 The target variable is `readmitted`, which has three classes:
+
 - `<30` — readmitted within 30 days
 - `>30` — readmitted after 30 days
 - `NO` — not readmitted
@@ -20,12 +19,10 @@ The target distribution is:
 | <30 | 11,357 | 11.16% |
 
 The dataset can be downloaded from Kaggle:
-[Diabetes 130-US Hospitals
-Dataset](https://www.kaggle.com/datasets/gigimolashkhia/diabetes-130-us-hospitals-for-years-1999-2008)
+[Diabetes 130-US Hospitals Dataset](https://www.kaggle.com/datasets/gigimolashkhia/diabetes-130-us-hospitals-for-years-1999-2008)
 
 ## Data Cleaning
-The dataset was checked for missing values, categorical variables, constant columns, and possible identifier
-columns.
+The dataset was checked for missing values, categorical variables, constant columns, and possible identifier columns.
 The following columns were removed:
 - `encounter_id`
 - `patient_nbr`
@@ -33,29 +30,36 @@ The following columns were removed:
 - `citoglipton`
 - `weight`
 - `max_glu_serum`
+
 Values represented by `?` were converted to missing values.
+
 For some categorical columns, missing values were replaced with `Not_Specified` or `Not_Measured`.
+
 The final dataset was checked again for missing values and duplicate rows.
 
 ## Data Preprocessing
 Several categorical variables were converted into numerical values.
-Medication-related variables were encoded numerically, and `change` and `diabetesMed` were converted to
-binary values.
+Medication-related variables were encoded numerically, and `change` and `diabetesMed` were converted to binary values.
 The three diagnosis columns (`diag_1`, `diag_2`, and `diag_3`) were grouped into broader disease categories
 based on their ICD-9 codes. These categories were then one-hot encoded.
 After encoding, the feature matrix contained **100 features**.
 The data was split into training and test sets using an 80/20 split with stratification.
+
 - Training set: 81,412 records
 - Test set: 20,354 records
+
 The target classes were label encoded and the features were standardized using `StandardScaler`.
 
 ## Models
 Four main classification models were trained and compared:
+
 - Logistic Regression
 - Decision Tree
 - Random Forest
 - XGBoost
+
 The models were evaluated using:
+
 - Accuracy
 - Macro F1
 - Weighted F1
@@ -74,24 +78,29 @@ The initial results were:
 XGBoost had the highest overall scores among the four initial models.
 
 ## Handling Class Imbalance
-The `<30` class was the smallest class in the dataset, so different approaches were tested to see how class
-weighting affected the models.
-Balanced versions of Logistic Regression and Random Forest were tested, as well as a Random Forest model with
-custom class weights.
+The `<30` class was the smallest class in the dataset, so different approaches were tested to see how class weighting affected the models.
+
+Balanced versions of Logistic Regression and Random Forest were tested, as well as a Random Forest model with custom class weights.
+
 A weighted XGBoost model was also trained using balanced class weights.
+
 The weighted XGBoost model achieved:
 - Accuracy: **0.518**
 - Macro F1: **0.455**
 - Weighted F1: **0.527**
+
 For the `<30` class, recall increased to **0.40**, compared with **0.03** in the initial XGBoost model.
 However, the overall accuracy decreased.
 
 ## Hyperparameter Tuning
 Hyperparameter tuning was performed for Random Forest using `GridSearchCV`.
+
 The parameters included:
+
 - `n_estimators`
 - `max_depth`
 - `min_samples_split`
+
 The best Random Forest parameters were:
 
 ```text
@@ -100,11 +109,15 @@ max_depth = None
 min_samples_split = 2
 
 ```
+
 XGBoost was also tuned using `GridSearchCV` with 3-fold cross-validation.
+
 The parameters tested were:
+
 - `n_estimators`: 100, 200
 - `max_depth`: 3, 6
 - `learning_rate`: 0.05, 0.1
+
 The best XGBoost parameters were:
 
 ```text
@@ -113,7 +126,9 @@ max_depth = 6
 learning_rate = 0.1
 
 ```
+
 The tuned XGBoost model achieved:
+
 - Accuracy: **0.597**
 - Macro F1: **0.417**
 - Weighted F1: **0.554**
@@ -130,32 +145,32 @@ The final comparison was:
 | XGBoost | 0.594 | 0.405 | 0.546 | 0.685 |
 | Tuned XGBoost | 0.597 | 0.417 | 0.554 | 0.687 |
 
-The tuned XGBoost model gave the best results in the final comparison, although the improvement over the
-initial XGBoost model was relatively small.
+The tuned XGBoost model gave the best results in the final comparison, although the improvement over the initial XGBoost model was relatively small.
 
 ## Feature Importance
-Feature importance was examined for the tree-based models, including Random Forest and the tuned XGBoost
-model.
+Feature importance was examined for the tree-based models, including Random Forest and the tuned XGBoost model.
+
 For XGBoost, some of the more important features included:
+
 - `number_inpatient`
 - `discharge_disposition_id`
 - `diag_1_Pregnancy`
 - `diabetesMed`
 
 ## Model Explainability with SHAP
+
 SHAP was used to examine the predictions of the tuned XGBoost model.
-A SHAP summary plot was used to look at the overall feature contributions. A dependence plot was also created
-for `number_inpatient`, and a waterfall plot was used to examine an individual prediction.
+
+A SHAP summary plot was used to look at the overall feature contributions. A dependence plot was also created for `number_inpatient`, and a waterfall plot was used to examine an individual prediction.
 This helped provide a closer look at how the features were contributing to the model's predictions.
 
 ## Conclusion
 The results show that predicting hospital readmission is difficult, especially for the `<30` class.
-Among the initial models, XGBoost performed best. Tuning its hyperparameters improved the results slightly,
-with the final model reaching an Accuracy of 0.597, a Macro F1 of 0.417, and a Macro AUC of 0.687.
-Class weighting improved the prediction of the minority `<30` class, but this came with a decrease in overall
-accuracy.
-Overall, the project provided a comparison of several classification models and also included feature
-importance and SHAP analysis to better understand the model predictions.
+Among the initial models, XGBoost performed best. Tuning its hyperparameters improved the results slightly, with the final model reaching an Accuracy of 0.597, a Macro F1 of 0.417, and a Macro AUC of 0.687.
+
+Class weighting improved the prediction of the minority `<30` class, but this came with a decrease in overall accuracy.
+
+Overall, the project provided a comparison of several classification models and also included feature importance and SHAP analysis to better understand the model predictions.
 
 ## Technologies Used
 - Python
